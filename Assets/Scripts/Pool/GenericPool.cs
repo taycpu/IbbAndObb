@@ -118,7 +118,13 @@ public class GenericPoolEditor : Editor
             genericPool.indices[i] = EditorGUILayout.Popup(genericPool.indices[i], genericPool.names[i]);
         }
 
-        genericPool.GetChilds();
+        if (GUILayout.Button("Get Pools"))
+        {
+            for (int i = 0; i < genericPool.indices.Length; i++)
+            {
+                genericPool.GetChilds();
+            }
+        }
     }
 }
 #endif

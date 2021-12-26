@@ -6,13 +6,33 @@ using UnityEngine;
 public class FakeRigidbody : PlayerComponent
 {
     public float Gravity => gravity;
-    public Vector3 velocity;
+    [HideInInspector] public Vector3 velocity;
     [SerializeField] private float gravity = 9.8f;
     [SerializeField] private LayerMask groundLayer;
     private float floorDistance = 0.1f;
 
+    public override void Tick()
+    {
+        if (!isActive) return;
+        if (RayToGround(out var distance))
+        {
+            if (distance > floorDistance)
+            {
+                velocity.y += gravity * Time.deltaTime;
+            }
 
-    public void LateUpdate()
+            else
+            {
+                velocity.y = 0;
+            }
+        }
+        else
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
+    }
+
+    public void PhysicsUpdate()
     {
         transform.position += velocity * Time.deltaTime;
     }
@@ -34,26 +54,5 @@ public class FakeRigidbody : PlayerComponent
     public void ReverseGravity()
     {
         gravity *= -1;
-    }
-
-    public override void Tick()
-    {
-        if (!isActive) return;
-        if (RayToGround(out var distance))
-        {
-            if (distance > floorDistance)
-            {
-                velocity.y += gravity * Time.deltaTime;
-            }
-
-            else
-            {
-                velocity.y = 0;
-            }
-        }
-        else
-        {
-            velocity.y += gravity * Time.deltaTime;
-        }
     }
 }

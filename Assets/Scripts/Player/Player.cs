@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public int PlayerId => playerId;
+    public int playerId;
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private FakeRigidbody fakeRigidbody;
     [SerializeField] private PlayerAnimator playerAnimator;
     [SerializeField] private InteractWithOther interactWithOther;
+    [SerializeField] private PlayerParticle playerParticle;
 
+    private bool isDead;
 
     private void Update()
     {
@@ -18,6 +22,10 @@ public class Player : MonoBehaviour
         playerAnimator.Tick();
     }
 
+    private void LateUpdate()
+    {
+        fakeRigidbody.PhysicsUpdate();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -29,7 +37,7 @@ public class Player : MonoBehaviour
         if (other.CompareTag("ObstacleKillTrigger"))
         {
             ObstacleKillTrigger killTrigger = other.GetComponent<ObstacleKillTrigger>();
-            TWEAKS.PlayParticleFromPool(0, killTrigger.particlePos.position);
+            playerParticle.DestroyTrap(killTrigger.particlePos.position);
             killTrigger.Trigger();
         }
 
@@ -41,7 +49,14 @@ public class Player : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Die");
         GameManager.Instance.ChangeGameState(CONSTANTS.LoseState);
+    }
+
+    public void FinishGame()
+    {
+        if (isDead) return;
+        playerParticle.Die(transform.position);
+        isDead = true;
+        gameObject.SetActive(false);
     }
 }
