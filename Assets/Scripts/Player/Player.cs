@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerAnimator playerAnimator;
     [SerializeField] private InteractWithOther interactWithOther;
     [SerializeField] private PlayerParticle playerParticle;
-
+    
     private bool isDead;
 
     private void Update()
