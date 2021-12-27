@@ -50978,9 +50978,13 @@ MonoBehaviour:
   jumpLayer:
     serializedVersion: 2
     m_Bits: 768
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 256
   jumpDistance: 0.1
   pushing: 0
   isUnited: 0
+  canMove: 0
 --- !u!1 &1084547413
 GameObject:
   m_ObjectHideFlags: 0
@@ -70878,9 +70882,13 @@ MonoBehaviour:
   jumpLayer:
     serializedVersion: 2
     m_Bits: 1280
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 256
   jumpDistance: 0.2
   pushing: 0
   isUnited: 0
+  canMove: 0
 --- !u!114 &2120925374
 MonoBehaviour:
   m_ObjectHideFlags: 0

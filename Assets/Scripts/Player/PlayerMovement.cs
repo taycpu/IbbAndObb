@@ -14,12 +14,14 @@ public class PlayerMovement : PlayerComponent
     [SerializeField] private float jumpAmount;
     [SerializeField] private float speed;
     [SerializeField] private LayerMask jumpLayer;
+    [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float jumpDistance;
     private bool isReversed;
     private bool jumped;
     private float horizontal;
     public bool pushing;
     public bool isUnited;
+    public bool canMove = true;
 
     public override void Tick()
     {
@@ -29,11 +31,26 @@ public class PlayerMovement : PlayerComponent
             Jump();
         }
 
+        CheckWalls();
+
         if ((!isUnited && !pushing) || playerInput.GetHorizontalAxis() != 0)
         {
             horizontal = playerInput.GetHorizontalAxis();
-
             Move(horizontal);
+        }
+    }
+
+    public void CheckWalls()
+    {
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), 0.3f, wallLayer))
+        {
+            horizontal = 0;
+            Move(horizontal);
+            canMove = false;
+        }
+        else
+        {
+            canMove = true;
         }
     }
 
@@ -76,7 +93,8 @@ public class PlayerMovement : PlayerComponent
     private void Move(float axis)
     {
         Flip(axis);
-        rb.velocity.x = axis * speed;
+        if (canMove)
+            rb.velocity.x = axis * speed;
     }
 
 
