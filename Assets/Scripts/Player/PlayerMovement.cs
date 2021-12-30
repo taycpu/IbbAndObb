@@ -4,12 +4,12 @@ using UnityEngine;
 public class PlayerMovement : PlayerComponent
 {
     public float Horizontal => horizontal;
-    public float Vertical => rb.velocity.normalized.y;
+    public float Vertical => physics.velocity.normalized.y;
     public bool OnJump => jumped;
 
-    public FakeRigidbody Rb => rb;
+    public PlayerPhysics Physics => physics;
 
-    [SerializeField] private FakeRigidbody rb;
+    [SerializeField] private PlayerPhysics physics;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private float jumpAmount;
     [SerializeField] private float speed;
@@ -19,14 +19,18 @@ public class PlayerMovement : PlayerComponent
     private bool isReversed;
     private bool jumped;
     private float horizontal;
-    public bool pushing;
-    public bool isUnited;
-    public bool canMove = true;
+    private bool pushing;
+    private bool isUnited;
+    private bool canMove = true;
+
+
+    private float stopDistance = 0.2f;
+    private float portalMinForce = 3f;
 
     public override void Tick()
     {
         if (!isActive) return;
-        if (Input.GetKeyDown(playerInput.jump))
+        if (Input.GetKeyDown(playerInput.jump) || Input.GetKeyDown(playerInput.jumpSec))
         {
             Jump();
         }
@@ -42,7 +46,8 @@ public class PlayerMovement : PlayerComponent
 
     public void CheckWalls()
     {
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), 0.3f, wallLayer))
+        if (UnityEngine.Physics.Raycast(transform.position, transform.TransformDirection(Vector3.right), stopDistance,
+            wallLayer))
         {
             horizontal = 0;
             Move(horizontal);
@@ -56,11 +61,11 @@ public class PlayerMovement : PlayerComponent
 
     public void ReverseGravity()
     {
-        if (Mathf.Abs(rb.velocity.y) < 3)
-            rb.velocity.y += 3 * Mathf.Sign(rb.Gravity);
-        rb.ReverseGravity();
+        if (Mathf.Abs(physics.velocity.y) < portalMinForce)
+            physics.velocity.y += portalMinForce * Mathf.Sign(physics.Gravity);
+        physics.ReverseGravity();
         jumpAmount *= -1;
-        float rot = rb.Gravity < 0 ? 0 : 180;
+        float rot = physics.Gravity < 0 ? 0 : 180;
         //    print("ROT = " + rot);
         transform.rotation = Quaternion.Euler(new Vector3(rot, transform.eulerAngles.y, 0));
         isReversed = true;
@@ -73,8 +78,8 @@ public class PlayerMovement : PlayerComponent
         {
             horizontal = 0;
             isUnited = true;
-            Rb.velocity.y = velocity.y;
-            Rb.velocity.x = velocity.x;
+            Physics.velocity.y = velocity.y;
+            Physics.velocity.x = velocity.x;
         }
     }
 
@@ -90,11 +95,16 @@ public class PlayerMovement : PlayerComponent
         pushing = false;
     }
 
+    public void ExtractUnited()
+    {
+        isUnited = false;
+    }
+
     private void Move(float axis)
     {
         Flip(axis);
         if (canMove)
-            rb.velocity.x = axis * speed;
+            physics.velocity.x = axis * speed;
     }
 
 
@@ -107,17 +117,18 @@ public class PlayerMovement : PlayerComponent
         {
             int yRot = axis > 0 ? 0 : 180;
             if (axis == 0) yRot = 90;
-            float xRot = rb.Gravity < 0 ? 0 : 180;
+            float xRot = physics.Gravity < 0 ? 0 : 180;
             transform.rotation = Quaternion.Euler(new Vector3(xRot, yRot, 0));
         }
     }
 
     void Jump()
     {
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), jumpDistance, jumpLayer))
+        if (UnityEngine.Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), jumpDistance,
+            jumpLayer))
         {
             Debug.Log("Jump");
-            rb.velocity.y += jumpAmount;
+            physics.velocity.y += jumpAmount;
         }
     }
 }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: obbInput
   m_EditorClassIdentifier: 
   jump: 273
+  jumpSec: 274
   left: 276
   right: 275
   horizontal: 0

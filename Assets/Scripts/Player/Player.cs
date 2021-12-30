@@ -7,24 +7,24 @@ public class Player : MonoBehaviour
     public int PlayerId => playerId;
     public int playerId;
     [SerializeField] private PlayerMovement movement;
-    [SerializeField] private FakeRigidbody fakeRigidbody;
+    [SerializeField] private PlayerPhysics playerPhysics;
     [SerializeField] private PlayerAnimator playerAnimator;
     [SerializeField] private InteractWithOther interactWithOther;
     [SerializeField] private PlayerParticle playerParticle;
-    
-    private bool isDead;
+
+    private bool isGameFinished;
 
     private void Update()
     {
-        fakeRigidbody.Tick();
+        playerPhysics.Tick();
         interactWithOther.Tick();
         movement.Tick();
         playerAnimator.Tick();
     }
-
+    
     private void LateUpdate()
     {
-        fakeRigidbody.PhysicsUpdate();
+        playerPhysics.PhysicsUpdate();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -45,6 +45,16 @@ public class Player : MonoBehaviour
         {
             Die();
         }
+
+        if (other.CompareTag("Finish"))
+        {
+            Finish();
+        }
+    }
+
+    private void Finish()
+    {
+        GameManager.Instance.ChangeGameState(CONSTANTS.WinState);
     }
 
     private void Die()
@@ -52,11 +62,20 @@ public class Player : MonoBehaviour
         GameManager.Instance.ChangeGameState(CONSTANTS.LoseState);
     }
 
-    public void FinishGame()
+
+    //This functions is calling from StateMachine events
+    public void WinGame()
     {
-        if (isDead) return;
+        if (isGameFinished) return;
+        isGameFinished = true;
+    }
+
+    //This functions is calling from StateMachine events
+    public void LoseGame()
+    {
+        if (isGameFinished) return;
         playerParticle.Die(transform.position);
-        isDead = true;
+        isGameFinished = true;
         gameObject.SetActive(false);
     }
 }

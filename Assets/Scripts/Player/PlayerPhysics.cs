@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FakeRigidbody : PlayerComponent
+public class PlayerPhysics : PlayerComponent
 {
     public float Gravity => gravity;
     [HideInInspector] public Vector3 velocity;
     [SerializeField] private float gravity = 9.8f;
     [SerializeField] private LayerMask groundLayer;
-    private float floorDistance = 0.1f;
+    [SerializeField] private float floorDistance = 0.1f;
+
+    private Vector3 lastGroundPos;
 
     public override void Tick()
     {
@@ -28,13 +30,33 @@ public class FakeRigidbody : PlayerComponent
         }
         else
         {
-            velocity.y += gravity * Time.deltaTime;
+            if (RayToUp(out var dist))
+            {
+            }
+            else
+            {
+                velocity.y += gravity * Time.deltaTime;
+            }
         }
     }
 
     public void PhysicsUpdate()
     {
         transform.position += velocity * Time.deltaTime;
+    }
+
+    private bool RayToUp(out float distance)
+    {
+        RaycastHit hit;
+        distance = 0;
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.up), out hit, Mathf.Infinity,
+            groundLayer))
+        {
+            distance = Mathf.Abs(transform.position.y - hit.point.y);
+            return true;
+        }
+
+        return false;
     }
 
     private bool RayToGround(out float distance)

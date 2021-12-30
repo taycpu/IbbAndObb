@@ -9,7 +9,7 @@ public class InteractWithOther : PlayerComponent
     [SerializeField] private PlayerMovement otherPlayer;
     [SerializeField] private Transform rayPos;
 
-    private float distance = 0.3f;
+    private float distance = 0.4f;
 
     public override void Tick()
     {
@@ -20,13 +20,13 @@ public class InteractWithOther : PlayerComponent
     private void PushHorizontal()
     {
         Debug.DrawRay(rayPos.position, transform.right * distance, Color.white);
-        if (myPlayer.Rb.velocity.x != 0)
+        if (myPlayer.Physics.velocity.x != 0)
         {
             // Does the ray intersect any objects excluding the player layer
             if (Physics.Raycast(rayPos.position, transform.right, distance, playerLayer))
             {
                 print("HITTING");
-                otherPlayer.Push(myPlayer.Rb.velocity);
+                otherPlayer.Push(myPlayer.Physics.velocity);
             }
             else
             {
@@ -45,11 +45,11 @@ public class InteractWithOther : PlayerComponent
 
         if (Physics.Raycast(transform.position, -transform.up, 0.1f, playerLayer))
         {
-            myPlayer.United(otherPlayer.Rb.velocity);
+            myPlayer.United(otherPlayer.Physics.velocity);
         }
         else
         {
-            myPlayer.isUnited = false;
+            myPlayer.ExtractUnited();
         }
     }
 }

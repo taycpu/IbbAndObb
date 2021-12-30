@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerInput : ScriptableObject
 {
     public KeyCode jump;
+    public KeyCode jumpSec;
     public KeyCode left;
     public KeyCode right;
     public float horizontal;
