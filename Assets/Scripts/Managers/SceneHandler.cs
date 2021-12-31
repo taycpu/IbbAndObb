@@ -7,14 +7,11 @@ public class SceneHandler : Manager<SceneHandler>
 {
     public override void Initialize()
     {
-        throw new System.NotImplementedException();
     }
 
-    private void Update()
+
+    public void ResetScene()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-        }
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
     }
 }

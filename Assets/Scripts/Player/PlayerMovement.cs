@@ -59,6 +59,11 @@ public class PlayerMovement : PlayerComponent
         }
     }
 
+    public void ResetVel()
+    {
+        physics.velocity = Vector3.zero;
+    }
+
     public void ReverseGravity()
     {
         if (Mathf.Abs(physics.velocity.y) < portalMinForce)
@@ -127,7 +132,6 @@ public class PlayerMovement : PlayerComponent
         if (UnityEngine.Physics.Raycast(transform.position, transform.TransformDirection(Vector3.down), jumpDistance,
             jumpLayer))
         {
-            Debug.Log("Jump");
             physics.velocity.y += jumpAmount;
         }
     }

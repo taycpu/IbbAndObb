@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
         movement.Tick();
         playerAnimator.Tick();
     }
-    
+
     private void LateUpdate()
     {
         playerPhysics.PhysicsUpdate();
@@ -68,6 +68,7 @@ public class Player : MonoBehaviour
     {
         if (isGameFinished) return;
         isGameFinished = true;
+        movement.ResetVel();
     }
 
     //This functions is calling from StateMachine events

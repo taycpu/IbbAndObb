@@ -25,7 +25,6 @@ public class InteractWithOther : PlayerComponent
             // Does the ray intersect any objects excluding the player layer
             if (Physics.Raycast(rayPos.position, transform.right, distance, playerLayer))
             {
-                print("HITTING");
                 otherPlayer.Push(myPlayer.Physics.velocity);
             }
             else
